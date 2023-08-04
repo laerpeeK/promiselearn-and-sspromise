@@ -1,8 +1,8 @@
 # promiselearn-and-sspromise
 
-## 这个仓库源码地址为：[promise](https://github.com/then/promise)。
-
-看了几个满足 Promise/A+规范的实现，这个源码的实现方式是个人觉得是最容易理解的。
+## promise的实现
+出自这个库：[promise](https://github.com/then/promise)。
+看了几个满足 Promise/A+规范的实现，这个库的实现方式是个人觉得是最容易理解的，也比较全面。
 
 ## 区别
 
