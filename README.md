@@ -11,6 +11,7 @@
 3. 只保留了源码部分，更好的结合源码分析。更改了 promise/A+测试集的调用方式。具体实现参照另一个库[promises-tests](https://github.com/promises-aplus/promises-tests)。
 4. 只考虑前端会涉及的 Promise 使用。
 5. 添加了 SSPromise 的实现。
+6. 重写了Promise.all/Promise.allSetteled方法。(此仓库的实现上通过调用Promise.resolve使方法实现比较容易理解，但原先版本的实现手段更详细，在方法本身就体现了resolve的规范要求)。
 
 ## 比较重要的观念
 
@@ -19,6 +20,7 @@
    浏览器/Nodejs 的事件队列如何良好的处理。你应该在 github 上寻找更适合你的库。比如看看[asap](https://github.com/kriskowal/asap)这个库的实现。
 2. Promise是优雅地书写异步代码的一种方案，而非异步本身。
 3. 此仓库 sspromise 目录是一个同步版本的 Promise 实现。 出发点是为了解决个人在开发 vue + vuex 项目的遇到的问题。 把处理过程放在 vuex。 把处理结果后续操作放在组件这样的一个需求。
+4. 这只是一个模拟，远远没有浏览器实现的Promise优秀，Promise静态方法实现存在一些边界条件问题。
 
 ### sspromise 说明
 

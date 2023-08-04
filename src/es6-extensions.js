@@ -137,44 +137,73 @@ Promise.any = function (values) {
 }
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-Promise.all = function (arr) {
-  var args = iterableToArray(arr)
-
+// 修改了实现方式，在理解Promise/A+ 规范的前提下这个版本的实现更好理解
+Promise.all = function (values) {
   return new Promise(function (resolve, reject) {
-    if (args.length === 0) return resolve([])
-    var remaining = args.length
-    function res(i, val) {
-      if (val && (typeof val === 'object' || typeof val === 'function')) {
-        if (val instanceof Promise && val.then === Promise.prototype.then) {
-          while (val._state === 3) {
-            val = val._value
-          }
+    var promises = iterableToArray(values)
+    var result = []
+    var resultLength = 0
 
-          if (val._state === 1) return res(i, val._value)
-          if (val._state === 2) reject(val._value)
-          val.then(function (val) {
-            res(i, val)
-          }, reject)
-          return
-        } else {
-          var then = val.then
-          if (typeof then === 'function') {
-            var p = new Promise(then.bind(val))
-            p.then(function (val) {
-              res(i, val)
-            }, reject)
-            return
+    if (promises.length === 0) {
+      resolve([])
+    } else {
+      promises.forEach(function (value, idx) {
+        Promise.resolve(value).then(
+          function (value) {
+            result[idx] = value
+            resultLength++
+            if (resultLength === promises.length) {
+              resolve(result)
+            }
+          },
+          function (reason) {
+            reject(reason)
           }
-        }
-      }
-      args[i] = val
-      if (--remaining === 0) {
-        resolve(args)
-      }
+        )
+      })
     }
+  })
+}
 
-    for (var i = 0; i < args.length; i++) {
-      res(i, args[i])
+// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled
+// 修改了实现方式，在理解Promise/A+ 规范的前提下这个版本的实现更好理解
+Promise.allSettled = function (values) {
+  return new Promise(function (resolve, reject) {
+    var promises = iterableToArray(values)
+    var result = []
+    var resultLength = 0
+    if (promises.length === 0) {
+      resolve([
+        {
+          status: 'fulfilled',
+          value: [],
+        },
+      ])
+    } else {
+      promises.forEach(function (value, idx) {
+        Promise.resolve(value).then(
+          function (value) {
+            result[idx] = {
+              status: 'fulfilled',
+              value,
+            }
+            resultLength++
+            if (resultLength === promises.length) {
+              resolve(result)
+            }
+          },
+          function (reason) {
+            result[idx] = {
+              status: 'rejected',
+              reason,
+            }
+            resultLength++
+            if (resultLength === promises.length) {
+              resolve(result)
+            }
+          }
+        )
+      })
     }
   })
 }
