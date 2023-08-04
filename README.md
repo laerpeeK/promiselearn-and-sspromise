@@ -20,7 +20,7 @@
    浏览器/Nodejs 的事件队列如何良好的处理。你应该在 github 上寻找更适合你的库。比如看看[asap](https://github.com/kriskowal/asap)这个库的实现。
 2. Promise是优雅地书写异步代码的一种方案，而非异步本身。
 3. 此仓库 sspromise 目录是一个同步版本的 Promise 实现。 出发点是为了解决个人在开发 vue + vuex 项目的遇到的问题。 把处理过程放在 vuex。 把处理结果后续操作放在组件这样的一个需求。
-4. 这只是一个模拟，远远没有浏览器实现的Promise优秀，Promise静态方法实现存在一些边界条件问题。
+4. 这只是一个模拟，Promise静态方法实现存在一些边界条件问题。
 
 ### sspromise 说明
 
