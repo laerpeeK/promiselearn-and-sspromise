@@ -173,19 +173,14 @@ Promise.allSettled = function (values) {
     var result = []
     var resultLength = 0
     if (promises.length === 0) {
-      resolve([
-        {
-          status: 'fulfilled',
-          value: [],
-        },
-      ])
+      resolve([])
     } else {
       promises.forEach(function (value, idx) {
         Promise.resolve(value).then(
           function (value) {
             result[idx] = {
               status: 'fulfilled',
-              value,
+              value: value,
             }
             resultLength++
             if (resultLength === promises.length) {
@@ -195,7 +190,7 @@ Promise.allSettled = function (values) {
           function (reason) {
             result[idx] = {
               status: 'rejected',
-              reason,
+              reason: reason,
             }
             resultLength++
             if (resultLength === promises.length) {
