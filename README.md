@@ -11,7 +11,7 @@
 3. 只保留了源码部分，更好的结合源码分析。更改了 promise/A+测试集的调用方式。具体实现参照另一个库[promises-tests](https://github.com/promises-aplus/promises-tests)。
 4. 只考虑前端会涉及的 Promise 使用。
 5. 添加了 SSPromise 的实现。
-6. 重写了Promise.all/Promise.allSetteled方法。(此仓库的实现上通过调用Promise.resolve使方法实现比较容易理解，但原先版本的实现手段更详细，在方法本身就体现了resolve的规范要求)。
+6. 重写了Promise.all/Promise.allSetteled方法。(通过了promise库原先的测试)。
 
 ## 比较重要的观念
 
