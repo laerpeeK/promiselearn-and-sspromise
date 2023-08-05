@@ -24,7 +24,6 @@ function valuePromise(value) {
 
 // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve
 Promise.resolve = function (value) {
-  // 跟resolve的最大区别在于 1)
   // 1) 如果该值本身就是一个 Promise，那么该 Promise 将被直接返回 (状态不一定是resolved)
   if (value instanceof Promise) return value
 
