@@ -29,8 +29,6 @@ function getThen(obj) {
   }
 }
 
-module.exports = SSPromise
-
 function SSPromise(fn) {
   if (typeof this !== 'object') {
     throw new TypeError('SSPromise 必须通过new调用！')
@@ -42,6 +40,8 @@ function SSPromise(fn) {
 
   this._state = 0
   this._value = null
+  this._deferredState = 0
+  this._deferreds = null
   if (fn === noop) return
   doResolve(fn, this)
 }
@@ -54,7 +54,7 @@ SSPromise.prototype.then = function (onFulfilled, onRejected) {
   }
 
   const res = new SSPromise(noop)
-  handleResolved(this, new Handler(onFulfilled, onRejected, res))
+  handle(this, new Handler(onFulfilled, onRejected, res))
   return res
 }
 
@@ -65,20 +65,41 @@ SSPromise.prototype.catch = function (onRejected) {
 SSPromise.prototype.finally = function (f) {
   return this.then(
     function (value) {
-      return new SSPromise((resolve, reject) => {
+      return new SSPromise((resolve) => {
         resolve(f())
       }).then(function () {
         return value
       })
     },
     function (err) {
-      return new SSPromise((resolve, reject) => {
+      return new SSPromise((resolve) => {
         resolve(f())
       }).then(function () {
         throw err
       })
     }
   )
+}
+
+function handle(self, deferred) {
+  if (self._state == 0) {
+    if (self._deferredState === 0) {
+      self._deferredState = 1
+      self._deferreds = deferred
+      return
+    }
+
+    if (self._deferredState === 1) {
+      self._deferredState = 2
+      self._deferreds = [self._deferreds, deferred]
+      return
+    }
+
+    self._deferreds.push(deferred)
+    return
+  }
+
+  handleResolved(self, deferred)
 }
 
 function handleResolved(self, deferred) {
@@ -108,6 +129,20 @@ function Handler(onFulfilled, onRejected, sspromise) {
   this.sspromise = sspromise
 }
 
+function finale(self) {
+  if (self._deferredState === 1) {
+    handle(self, self._deferreds)
+    self._deferreds = null
+  }
+
+  if (self._deferredState === 2) {
+    for (var i = 0; i < self._deferreds.length; i++) {
+      handle(self, self._deferreds[i])
+    }
+    self._deferreds = null
+  }
+}
+
 function resolve(self, newValue) {
   if (newValue === self || newValue instanceof SSPromise) {
     return reject(
@@ -135,14 +170,15 @@ function resolve(self, newValue) {
 
   self._state = 1
   self._value = newValue
-  // sync 不需要Promise的finale处理
+
+  finale(self)
 }
 
 function reject(self, newValue) {
   self._state = 2
   self._value = newValue
 
-  // sync
+  finale(self)
 }
 
 function doResolve(fn, sspromise) {
@@ -166,3 +202,12 @@ function doResolve(fn, sspromise) {
     reject(sspromise, LAST_ERROR)
   }
 }
+
+SSPromise.version = '0.0.1'
+SSPromise.install = function () {
+  if (!window.SSPromise) {
+    window.SSPromise = SSPromise
+  }
+}
+
+exports = module.exports = SSPromise

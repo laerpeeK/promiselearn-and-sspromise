@@ -6,7 +6,7 @@ const state = {
     if (num && typeof num !== 'number') {
       return reject({
         status: 'fail',
-        message: 'num 必须为数字！'
+        message: 'num 必须为数字！',
       })
     }
 
@@ -51,3 +51,32 @@ c.then((res) => {
 }).finally(() => {
   console.log('finally')
 })
+
+// 4) more then
+const d = new SSPromise((resolve, reject) => {
+  state.addCount(1, resolve, reject)
+})
+
+d.then((res) => {
+  console.log('success: 1then', res)
+})
+
+d.then((res) => {
+  console.log('success: 2then', res)
+})
+
+// 5) setTimeout to resolve
+const e = new SSPromise((resolve, reject) => {
+  setTimeout(() => {
+    state.addCount(1, resolve, reject)
+  }, 2000)
+})
+
+e.then(
+  (res) => {
+    console.log('e-success: ', res)
+  },
+  (err) => {
+    console.log('e-fail: ', err)
+  }
+)
