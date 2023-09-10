@@ -38,6 +38,8 @@ promise/A+规范的学习 以及 SSPromise(Simple Synchronous Promise)的实现
 4. 支持对单个 SSPromise 实例链式调用 then, catch, finally。
 5. 支持对单个 SSPromise 实例添加多个 then。
 6. 支持在若干时间后改变 SSPromise 实例的状态。
+7. 支持SSPromise上的静态方法 resolve, reject, all。
+8. 上述实现跟promise库一致，只是为了满足自身使用需求，简化了不少 (~.~)
 
 ### 使用
 

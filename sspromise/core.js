@@ -1,4 +1,3 @@
-'use strict'
 /**
  * SSPromise - Simple Synchronous Promise
  * 不符合Promise/A+规范 单纯采用“promise”这种方式书写同步代码的做法。
@@ -45,6 +44,7 @@ function SSPromise(fn) {
   if (fn === noop) return
   doResolve(fn, this)
 }
+SSPromise._noop = noop
 
 SSPromise.prototype.then = function (onFulfilled, onRejected) {
   if (this.constructor !== SSPromise) {
@@ -56,29 +56,6 @@ SSPromise.prototype.then = function (onFulfilled, onRejected) {
   const res = new SSPromise(noop)
   handle(this, new Handler(onFulfilled, onRejected, res))
   return res
-}
-
-SSPromise.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected)
-}
-
-SSPromise.prototype.finally = function (f) {
-  return this.then(
-    function (value) {
-      return new SSPromise((resolve) => {
-        resolve(f())
-      }).then(function () {
-        return value
-      })
-    },
-    function (err) {
-      return new SSPromise((resolve) => {
-        resolve(f())
-      }).then(function () {
-        throw err
-      })
-    }
-  )
 }
 
 function handle(self, deferred) {
@@ -210,4 +187,4 @@ SSPromise.install = function () {
   }
 }
 
-exports = module.exports = SSPromise
+export default SSPromise

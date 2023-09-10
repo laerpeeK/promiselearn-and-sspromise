@@ -1,4 +1,4 @@
-const SSPromise = require('./core')
+import SSPromise from './static.js'
 
 const state = {
   count: 0,
@@ -78,5 +78,51 @@ e.then(
   },
   (err) => {
     console.log('e-fail: ', err)
+  }
+)
+
+SSPromise.resolve(1).then((res) => {
+  console.log('SSPromise.resolve: ', res)
+})
+
+SSPromise.resolve(
+  new SSPromise((resolve) => {
+    resolve(2)
+  })
+).then((res) => {
+  console.log('SSPromise.resolve: ', res)
+})
+
+SSPromise.reject(3).catch((err) => {
+  console.log('SSPromise.reject: ', err)
+})
+
+SSPromise.all([
+  SSPromise.resolve(1),
+  2,
+  new SSPromise((resolve) => {
+    resolve(3)
+  }),
+]).then(
+  (res) => {
+    console.log('SSPromise.all resolve: ', res)
+  },
+  (err) => {
+    console.log('SSPromise.all reject', err)
+  }
+)
+
+SSPromise.all([
+  1,
+  2,
+  new SSPromise((resolve, reject) => {
+    reject(3)
+  }),
+]).then(
+  (res) => {
+    console.log('SSPromise.all resolve: ', res)
+  },
+  (err) => {
+    console.log('SSPromise.all reject', err)
   }
 )
